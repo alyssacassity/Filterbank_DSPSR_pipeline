@@ -1,9 +1,10 @@
 # Filterbank_DSPSR_pipeline
 Scripts from Mehar to generate archive files with DSPSR and generate TOAs. A bit clunky right now but it works anyway
 
-1. Make a csv file for each MJD with positive_bursts_1.csv from CHIPSPIPE (I was too lazy to figure out how to get around this for now) with __split_csv.sh__
+1. Make a csv file for each MJD with `positive_bursts_1.csv` from CHIPSPIPE (I was too lazy to figure out how to get around this for now) with __split_csv.sh__
 
-2. Make filterbank files rather than NPZs around a single pulse using __Fitburst_fil_generator_decoupled.py__ . Need to change zoom window as appropriate given the spin period. Run on the csvs with only real bursts (I made a copy of positive_burst_1.csv with RFI removed) - run using __fil_gen_job.sh__ to loop through each line in the csv
+2. Make filterbank files rather than NPZs around a single pulse using __Fitburst_fil_generator_decoupled.py__ .
+Need to change zoom window as appropriate given the spin period. Run on the csvs with only real bursts (I made a copy of `positive_burst_1.csv` with RFI removed) - run using __fil_gen_job.sh__ to loop through each line in the csv
 
 3. Run dspsr on the fils with __run_fil_dspsr.sh__ : `dspsr -k CHIME -nsub 1 -F 1 -E pulsar.par name.fil -O name` . pulsar.par is just the original par file. I think? it only works if it's renamed to pulsar.par
 
@@ -14,7 +15,7 @@ Scripts from Mehar to generate archive files with DSPSR and generate TOAs. A bit
 __Generate TOAs__
 Option 1: uses the smoothed profile of a given pulse as the template profile in pat 
 
-1. Smooth the profiles: psrsmooth -W *.fix
+1. Smooth the profiles: `psrsmooth -W *.fix`
 
 2. Extract TOAs with __run_pat.sh__  this uses the smoothed profile of one pulse as the template profile in pat. Makes a single .tim for each pulse
 
