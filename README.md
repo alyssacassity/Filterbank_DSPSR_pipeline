@@ -16,13 +16,13 @@ __Generate TOAs__
 
 Option 1: uses the smoothed profile of a given pulse as the template profile in pat 
 
-1. Smooth the profiles: `psrsmooth -W *.fix`
+1. Smooth the profiles: `psrsmooth -W *.fix` (this is already done in __ar_process.sh__)
 
 2. Extract TOAs with __run_pat.sh__  this uses the smoothed profile of one pulse as the template profile in pat. Makes a single .tim for each pulse
 
 3. Concatenate all the tim files for each into one `combined.tim` , with a grep to get rid of the FORMAT 1 lines.
 
-Option 2: make a combined profile with all the pulses (comment out last line of smoothing in ar_process.sh)
+Option 2: make a combined profile with all the pulses (you can comment out last line of smoothing in __ar_process.sh__)
 
 1. Make a combined profile added.ftp (I didn't have that many pulses so I just did this in the command line, but you can use __make_template.batch__)
 `psradd -E pulsar.par -F *.fix -o added.ftp`
