@@ -13,6 +13,7 @@ Need to change zoom window as appropriate given the spin period. Run on the csvs
 - `psredit -c dm=$DM -e fix *.ftp`
 
 __Generate TOAs__
+
 Option 1: uses the smoothed profile of a given pulse as the template profile in pat 
 
 1. Smooth the profiles: `psrsmooth -W *.fix`
