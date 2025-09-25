@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu May  9 14:34:19 2024
-Final version before removing debug test statements
 @author: ktsan
+revisions by Mehar Sahota to extract fil rather than npz
 """
 import glob
 import argparse
@@ -72,7 +72,7 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=False):
     fbt = fbt.normalise()
     # Further cut data down to 1 second block
     zoom_mid_sample = int(t_block/2/fbh.tsamp/downsamp)
-    zoom_window = 0.3 #second
+    zoom_window = 1.0 #second
     zoom_window_samples = int(zoom_window/fbh.tsamp/downsamp)
     zoom_start_samp = int(zoom_mid_sample - zoom_window_samples/2)
     zoom_end_samp = int(zoom_mid_sample + zoom_window_samples/2)
