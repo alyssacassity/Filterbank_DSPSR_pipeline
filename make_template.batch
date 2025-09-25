@@ -7,4 +7,4 @@
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 # adjust center freq to be the same for all
-psradd -E pulsar.par  -o added *.ar
+psradd -E pulsar.par  -o added.ftp *.fix
