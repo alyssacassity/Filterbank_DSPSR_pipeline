@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu May  9 14:34:19 2024
+Final version before removing debug test statements
 @author: ktsan
-revisions by Mehar Sahota to extract fil rather than npz
 """
 import glob
 import argparse
@@ -62,7 +62,7 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=False):
     fbt[mask,:] = np.median(fbt[~mask,:])
     # Identify bad channels for masking and dedisperse data if needed
     if not isddp:
-        fbt = fbt.dedisperse(dm=disp_measure)
+        fbt = fbt.dedisperse(dm=19.5)
         disp_measure = 0
     else:
         fbt = fbt
@@ -72,7 +72,7 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=False):
     fbt = fbt.normalise()
     # Further cut data down to 1 second block
     zoom_mid_sample = int(t_block/2/fbh.tsamp/downsamp)
-    zoom_window = 1.0 #second
+    zoom_window = 0.3 #second
     zoom_window_samples = int(zoom_window/fbh.tsamp/downsamp)
     zoom_start_samp = int(zoom_mid_sample - zoom_window_samples/2)
     zoom_end_samp = int(zoom_mid_sample + zoom_window_samples/2)
@@ -101,7 +101,7 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=False):
         metadata=metadata, 
         burst_parameters=burst_parameters,
         )
-    fbt.to_file()        
+    fbt.to_file(filename=fil_short_name + '_' + str(fil_time) + '_' + str(t_origin) + ".fil")        
     return fbh.tstart
 
 
@@ -147,7 +147,7 @@ for file in files:
     fildm.append(filparts[6])
     tstart_list.append(filparts[2])
     filmjd.append(str(int(float(filparts[2]))))
-filfiles = glob.glob(fils_path + r'/*.fil')
+filfiles = glob.glob(fils_path + r'/J1541+47_*_pow.fil')
 fils_to_run = []
 for i in range(len(files)):
    for file in filfiles:
