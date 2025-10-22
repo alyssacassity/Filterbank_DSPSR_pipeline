@@ -65,6 +65,7 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=False):
     fbt = fbt.normalise()
     # Further cut data down to 1 second block
     zoom_mid_sample = int(t_block/2/fbh.tsamp/downsamp)
+    # Alter accordingly so zoom_window ~ spin period
     zoom_window = 0.3 #second
     zoom_window_samples = int(zoom_window/fbh.tsamp/downsamp)
     zoom_start_samp = int(zoom_mid_sample - zoom_window_samples/2)
@@ -144,6 +145,7 @@ for file in files:
     fildm.append(filparts[6])
     tstart_list.append(filparts[2])
     filmjd.append(str(int(float(filparts[2]))))
+# Alter accordingly for source name (prevents glob.glob from looking through newly generated .fil files)
 filfiles = glob.glob(fils_path + r'/J1541+47_*_pow.fil')
 fils_to_run = []
 for i in range(len(files)):
