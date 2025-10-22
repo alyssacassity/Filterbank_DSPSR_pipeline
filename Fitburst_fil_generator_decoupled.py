@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu May  9 14:34:19 2024
+Last update on Tue Oct 21 2025
 Final version before removing debug test statements
-@author: ktsan
+@author: ktsan, msahota, acassity
 """
 import glob
 import argparse
@@ -18,7 +19,6 @@ ignored_chans = ([0] + list(range(34,48)) + list(range(113,179)) +
 # Cuts a chunk of the .fil file for analysis
 def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=False):
     fbfile = FilReader(fil_name)
-    print(f"Reading file: {fil_name}")
     sub = '.fil'
     # Remove suffix from filename for naming .npz file later
     fil_short_name = [i for i in fil_name.split("/") if sub in i][0].removesuffix(sub)
@@ -31,13 +31,6 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=False):
     nsamps = nsamps-nsamps%downsamp
     #t_start = 396.3
     start_samp = round(t_start/fbh.tsamp) # starting sample block
-
-    print("debugging")
-    print(f"fbfile.header.nsamples: {fbfile.header.nsamples}")
-    print(f"fbfile.header.tsamp: {fbfile.header.tsamp}")
-    print(f"Start sample: {start_samp}")
-    print(f"Nsamps: {nsamps}")
-    print(f"End sample: {start_samp + nsamps}")
     fblock = fbfile.read_block(start_samp, nsamps)
 
     # Remove channels depending on MJD of file
@@ -88,20 +81,24 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=False):
                             scattering_index = [-4], scattering_timescale = [0.01], spectral_index = [0],
                             spectral_running = [0])
 
+
     # Plot data and save
     #Saves figure to .png image
     plt.figure()
     plt.imshow(fbt, aspect='auto',cmap="YlGnBu")
     plt.savefig(fil_short_name + '_' + str(fil_time) + '_' + str(t_origin) + '_test.png')
     plt.close()
-    data_full = fbt
-    np.savez(
-        (fil_short_name + '_' + str(fil_time) + '_' + str(t_origin) + ".npz"), 
-        data_full=data_full, 
-        metadata=metadata, 
-        burst_parameters=burst_parameters,
-        )
-    fbt.to_file(filename=fil_short_name + '_' + str(fil_time) + '_' + str(t_origin) + ".fil")        
+    outfile = fil_short_name + '_' + str(fil_time) + '_' + str(t_origin) + ".fil"
+    update_header = fbh.new_header({"filename": outfile,
+                                    "tstart": time_bin0, 
+                                    "tsamp": fbh.tsamp*downsamp,
+                                    "nsamples": zoom_window_samples,
+                                    "filenames": [outfile],
+                                    "nsamples_files": [zoom_window_samples],
+                                    "tstart_files": [time_bin0],
+                                    "foff": fbh.foff*dsampfreq})    
+    fbt.header = update_header
+    fbt.to_file(filename=outfile)
     return fbh.tstart
 
 
@@ -131,14 +128,12 @@ pulse_path = args.pulse_path
 fils_path = args.fils_path
 datafile = pulse_path
 data = np.genfromtxt(datafile, delimiter=",", dtype=str)
-if data.ndim == 1:
-    files = [data[0]]
-else:
-    files = data[:, 0]
+files = data[:,0]
 tstart_list = []
 filtime = []
 fildm = []
 filmjd = []
+
 # Find and analyze candidate files for pulsar, appends found .fil files to list of files to run by singlecut function
 for file in files:
     file = file[file.find('cand'):]
@@ -154,10 +149,4 @@ for i in range(len(files)):
        if filmjd[i] in file:
             fils_to_run.append(file)
 toa_list = []
-# debugging
-print("ind:", ind)
-print("Len fils_to_run:", len(fils_to_run))
-print("Len filtime:", len(filtime))
-print("Len fildm:", len(fildm))
-print("Len tstart_list:", len(tstart_list))
 singlecut(fils_to_run[ind], float(filtime[ind])-5, float(fildm[ind]), float(filtime[ind]), float(tstart_list[ind]))
