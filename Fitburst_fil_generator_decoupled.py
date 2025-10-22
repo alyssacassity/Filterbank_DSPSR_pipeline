@@ -91,6 +91,8 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=False):
     outfile = fil_short_name + '_' + str(fil_time) + '_' + str(t_origin) + ".fil"
     update_header = fbh.new_header({"filename": outfile,
                                     "tstart": time_bin0, 
+                                    "nchans": int(fbh.nchans/dsampfreq),
+                                    "fch1": int(fbh.fch1),
                                     "tsamp": fbh.tsamp*downsamp,
                                     "nsamples": zoom_window_samples,
                                     "filenames": [outfile],
